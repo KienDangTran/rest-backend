@@ -1,0 +1,28 @@
+jwt:
+  header: Authorization
+  secret: giong-@uthorization-2016
+logging:
+  level:
+    org.springframework.security: DEBUG
+server:
+  port: 8080
+spring:
+  resources:
+    chain:
+      enabled: true
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/leave_application_db?autoReconnect=true&useSSL=false
+    username: admin
+    password: r00t
+    tomcat:
+      max-active: 50
+      test-on-borrow: true
+  jpa:
+    database: MYSQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+management:
+  security:
+    enabled: true # set to false to disable 'default' Spring Boot security
