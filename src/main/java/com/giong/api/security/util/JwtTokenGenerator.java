@@ -1,14 +1,9 @@
 package com.giong.api.security.util;
 
-import com.giong.api.constant.MasterDataStatus;
-import com.giong.api.dto.oauth.AuthorityDTO;
-import com.giong.api.dto.oauth.RoleDTO;
 import com.giong.api.dto.oauth.UserDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-
-import java.util.Collections;
 
 /**
  * convenience class to generate a token for testing your requests.
@@ -33,17 +28,17 @@ public class JwtTokenGenerator {
 			.compact();
 	}
 
-	public static void main(String[] args) {
-		UserDTO user = new UserDTO();
-		user.setUserId("U000000001");
-		user.setUsername("admin");
-		user.setEnabled(true);
-		RoleDTO role = new RoleDTO("ADMIN", "Administrator", MasterDataStatus.ACTIVE,
-			Collections.singletonList(new AuthorityDTO("EXE_EMP", "Execute Employee",
-				MasterDataStatus.ACTIVE)));
-		user.setRoles(Collections.singletonList(role));
-
-		System.out.println("***********************\n\nBearer " + generateToken(user, "giong-@uthorization-2016")
-			+ "\n\n****************************");
-	}
+	//	public static void main(String[] args) {
+	//		UserDTO user = new UserDTO();
+	//		user.setUserId("U000000001");
+	//		user.setUsername("admin");
+	//		user.setEnabled(true);
+	//		RoleDTO role = new RoleDTO("ADMIN", "Administrator", MasterDataStatus.ACTIVE,
+	//			Collections.singletonList(new AuthorityDTO("EXE_EMP", "Execute Employee",
+	//				MasterDataStatus.ACTIVE)));
+	//		user.setRoles(Collections.singletonList(role));
+	//
+	//		System.out.println("***********************\n\nBearer " + generateToken(user, "giong-@uthorization-2016")
+	//			+ "\n\n****************************");
+	//	}
 }
