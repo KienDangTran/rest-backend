@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Transactional
-@Service("userDetailsService")
+@Service("userService")
 public class UserService extends BaseService<User, String, UserRepository> implements UserDetailsService {
 
 	@Override

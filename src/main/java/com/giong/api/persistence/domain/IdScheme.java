@@ -11,7 +11,8 @@ import javax.persistence.*;
 public class IdScheme extends AbstractEntity {
 	@Id
 	@Column(name = "seq_no")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "idSchemaSeqGenerator", sequenceName = "id_schema_seq")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "idSchemaSeqGenerator")
 	private int seq_no;
 
 	@Column(name = "scheme_name")

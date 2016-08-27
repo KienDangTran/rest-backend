@@ -3,7 +3,8 @@ jwt:
   secret: giong-@uthorization-2016
 logging:
   level:
-    org.springframework.security: DEBUG
+    org.springframework.security: debug
+    org.hibernate.SQL: trace
 server:
   port: 8080
 spring:
@@ -15,14 +16,17 @@ spring:
     url: jdbc:mysql://localhost:3306/leave_application_db?autoReconnect=true&useSSL=false
     username: admin
     password: r00t
+    continue-on-error: true
     tomcat:
       max-active: 50
       test-on-borrow: true
   jpa:
-    database: MYSQL
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5Dialect
     show-sql: true
     hibernate:
       ddl-auto: update
 management:
   security:
-    enabled: true # set to false to disable 'default' Spring Boot security
+    enabled: true
+debug: true
