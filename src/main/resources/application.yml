@@ -15,7 +15,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/leave_application_db?autoReconnect=true&useSSL=false
     username: admin
-    password: r00t
+    password: r000000t
     continue-on-error: true
     tomcat:
       max-active: 50
