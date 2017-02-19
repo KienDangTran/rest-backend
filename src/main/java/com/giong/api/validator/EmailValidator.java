@@ -12,7 +12,7 @@ public class EmailValidator {
 	private Matcher matcher;
 
 	private static final String EMAIL_PATTERN =
-		"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+			"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
 	public EmailValidator() {
 		this.pattern = Pattern.compile(EmailValidator.EMAIL_PATTERN);

@@ -26,6 +26,6 @@ public class MessageService implements MessageSourceAware {
 	}
 
 	public String getMessages(String code) {
-		return this.getMessages(code, new Object[] {});
+		return this.getMessages(code, new Object[]{});
 	}
 }

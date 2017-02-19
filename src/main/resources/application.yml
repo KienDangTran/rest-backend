@@ -1,6 +1,8 @@
-jwt:
-  header: Authorization
-  secret: giong-@uthorization-2016
+jwt.setting:
+  tokenExpirationTime: 60 # seconds
+  refreshTokenExpTime: 3600 # seconds
+  tokenIssuer: giong
+  tokenSigningKey: oYIXCD24cPQ*3*hZ
 logging:
   level:
     org.springframework.security: debug

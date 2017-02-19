@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Service
 public abstract class BaseService<T, ID extends Serializable, R extends JpaRepository<T, ID>>
-	implements GenericService<T, ID> {
+		implements GenericService<T, ID> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
