@@ -5,6 +5,7 @@ import com.giong.api.constant.Endpoint;
 import com.giong.api.security.RestAuthenticationEntryPoint;
 import com.giong.api.security.auth.ajax.AjaxAuthenticationProvider;
 import com.giong.api.security.auth.ajax.AjaxLoginProcessingFilter;
+import com.giong.api.security.auth.ajax.CorsFilter;
 import com.giong.api.security.auth.jwt.JwtAuthenticationProvider;
 import com.giong.api.security.auth.jwt.JwtTokenAuthenticationProcessingFilter;
 import com.giong.api.security.auth.jwt.SkipPathRequestMatcher;
@@ -18,6 +19,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -54,7 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	protected AjaxLoginProcessingFilter buildAjaxLoginProcessingFilter() throws Exception {
+	protected AjaxLoginProcessingFilter ajaxLoginProcessingFilter() throws Exception {
 		AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(
 				Endpoint.FORM_BASED_LOGIN_ENTRY_POINT,
 				successHandler,
@@ -65,7 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return filter;
 	}
 
-	protected JwtTokenAuthenticationProcessingFilter buildJwtTokenAuthenticationProcessingFilter() throws Exception {
+	protected JwtTokenAuthenticationProcessingFilter jwtTokenAuthenticationProcessingFilter() throws Exception {
 		List<String> pathsToSkip = Arrays.asList(
 				Endpoint.TOKEN_REFRESH_ENTRY_POINT,
 				Endpoint.FORM_BASED_LOGIN_ENTRY_POINT
@@ -77,6 +79,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		filter.setAuthenticationManager(this.authenticationManager);
 		return filter;
 	}
+
+//	@Bean
+//	public FilterRegistrationBean corsFilter() {
+//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//		CorsConfiguration config = new CorsConfiguration();
+//		config.setAllowCredentials(true);
+//		config.addAllowedOrigin("*");
+//		config.addAllowedHeader("*");
+//		config.addAllowedMethod("*");
+//		source.registerCorsConfiguration("/**", config);
+//		FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+//		bean.setOrder(0);
+//		return bean;
+//	}
 
 	@Bean
 	@Override
@@ -92,28 +108,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http
-				.csrf().disable() // We don't need CSRF for JWT based authentication
-				.exceptionHandling()
-				.authenticationEntryPoint(this.authenticationEntryPoint)
+		http.csrf().disable()
+			.exceptionHandling()
+			.authenticationEntryPoint(this.authenticationEntryPoint)
 
-				.and()
-				.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-				.and()
-				.authorizeRequests()
-				.antMatchers(Endpoint.FORM_BASED_LOGIN_ENTRY_POINT).permitAll() // Login end-point
-				.antMatchers(Endpoint.TOKEN_REFRESH_ENTRY_POINT).permitAll() // Token refresh end-point
-				.antMatchers("/console").permitAll() // H2 Console Dash-board - only for testing
-				.and()
-				.authorizeRequests()
-				.antMatchers(Endpoint.TOKEN_BASED_AUTH_ENTRY_POINT).authenticated() // Protected API End-points
-				.and()
-				.addFilterBefore(buildAjaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(
-						buildJwtTokenAuthenticationProcessingFilter(),
-						UsernamePasswordAuthenticationFilter.class
-				);
+			.and()
+			.authorizeRequests()
+			.antMatchers(Endpoint.FORM_BASED_LOGIN_ENTRY_POINT).permitAll()
+			.antMatchers(Endpoint.TOKEN_REFRESH_ENTRY_POINT).permitAll()
+
+			.and()
+			.authorizeRequests()
+			.antMatchers(Endpoint.TOKEN_BASED_AUTH_ENTRY_POINT).authenticated()
+
+			.and()
+			.addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)
+			.addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtTokenAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 }

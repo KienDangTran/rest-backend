@@ -25,6 +25,7 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
 	private static Logger logger = LoggerFactory.getLogger(AjaxLoginProcessingFilter.class);
 	private static final String XML_HTTP_REQUEST = "XMLHttpRequest";
 	private static final String X_REQUESTED_WITH = "X-Requested-With";
+	static final String ORIGIN = "Origin";
 
 	private final AuthenticationSuccessHandler successHandler;
 	private final AuthenticationFailureHandler failureHandler;
@@ -44,6 +45,19 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException, IOException, ServletException {
+		if (HttpMethod.OPTIONS.name().equals(request.getMethod())) {
+			if (StringUtils.isEmpty(request.getHeader(ORIGIN))) {
+				String origin = request.getHeader(ORIGIN);
+				response.addHeader("Access-Control-Allow-Origin", origin);
+				response.addHeader("Access-Control-Allow-Methods", "*");
+				response.addHeader("Access-Control-Allow-Credentials", "true");
+				response.addHeader("Access-Control-Allow-Headers", "*");
+			} else {
+				response.getWriter().print("OK");
+				response.getWriter().flush();
+			}
+			return null;
+		}
 		if (!HttpMethod.POST.name().equals(request.getMethod()) || !XML_HTTP_REQUEST.equals(request.getHeader(
 				X_REQUESTED_WITH))) {
 			if (logger.isDebugEnabled()) {
