@@ -37,7 +37,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		String subject = jwsClaims.getBody().getSubject();
 		List<String> scopes = jwsClaims.getBody().get("scopes", List.class);
 		List<GrantedAuthority> authorities = scopes.stream()
-												   .map(auth -> new Authority(auth))
+												   .map(Authority::new)
 												   .collect(Collectors.toList());
 
 		UserContext context = UserContext.create(subject, authorities);

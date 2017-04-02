@@ -6,8 +6,8 @@ import com.giong.api.security.RestAuthenticationEntryPoint;
 import com.giong.api.security.auth.ajax.AjaxAuthenticationProvider;
 import com.giong.api.security.auth.ajax.AjaxLoginProcessingFilter;
 import com.giong.api.security.auth.ajax.CorsFilter;
+import com.giong.api.security.auth.jwt.JwtAuthenticationProcessingFilter;
 import com.giong.api.security.auth.jwt.JwtAuthenticationProvider;
-import com.giong.api.security.auth.jwt.JwtTokenAuthenticationProcessingFilter;
 import com.giong.api.security.auth.jwt.SkipPathRequestMatcher;
 import com.giong.api.security.auth.jwt.extractor.TokenExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	public static final String JWT_TOKEN_HEADER_PARAM = "X-Authorization";
+	public static final String JWT_TOKEN_HEADER_PARAM = "Authorization";
 
 	@Autowired
 	private RestAuthenticationEntryPoint authenticationEntryPoint;
@@ -67,15 +67,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return filter;
 	}
 
-	protected JwtTokenAuthenticationProcessingFilter jwtTokenAuthenticationProcessingFilter() throws Exception {
+	protected JwtAuthenticationProcessingFilter jwtTokenAuthenticationProcessingFilter() throws Exception {
 		List<String> pathsToSkip = Arrays.asList(
 				Endpoint.TOKEN_REFRESH_ENTRY_POINT,
 				Endpoint.FORM_BASED_LOGIN_ENTRY_POINT
 		);
 		SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, Endpoint
 				.TOKEN_BASED_AUTH_ENTRY_POINT);
-		JwtTokenAuthenticationProcessingFilter filter
-				= new JwtTokenAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher);
+		JwtAuthenticationProcessingFilter filter
+				= new JwtAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher);
 		filter.setAuthenticationManager(this.authenticationManager);
 		return filter;
 	}

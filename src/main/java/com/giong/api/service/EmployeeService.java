@@ -20,8 +20,12 @@ public class EmployeeService extends BaseService<Employee, String, EmployeeRepos
 	@Autowired
 	SchemeService schemeService;
 
-	public List<Employee> getAllEmployee() {
-		return this.repository.findAll();
+	public List<Employee> fetchEmployees(int pageNo, int pageSize) {
+		return this.repository.fetchEmployees(pageNo, pageSize);
+	}
+
+	public long countEmployees() {
+		return this.repository.count();
 	}
 
 	public Employee findEmployeeyByCode(String employeeCode) {

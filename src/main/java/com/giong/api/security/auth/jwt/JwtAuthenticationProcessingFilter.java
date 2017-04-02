@@ -4,6 +4,7 @@ import com.giong.api.security.auth.jwt.extractor.TokenExtractor;
 import com.giong.api.security.config.WebSecurityConfig;
 import com.giong.api.security.model.token.RawAccessJwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -25,12 +27,12 @@ import java.io.IOException;
  *         <p>
  *         Aug 5, 2016
  */
-public class JwtTokenAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
+public class JwtAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 	private final AuthenticationFailureHandler failureHandler;
 	private final TokenExtractor tokenExtractor;
 
 	@Autowired
-	public JwtTokenAuthenticationProcessingFilter(
+	public JwtAuthenticationProcessingFilter(
 			AuthenticationFailureHandler failureHandler,
 			TokenExtractor tokenExtractor, RequestMatcher matcher
 	) {
@@ -42,6 +44,20 @@ public class JwtTokenAuthenticationProcessingFilter extends AbstractAuthenticati
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException, IOException, ServletException {
+		if (HttpMethod.OPTIONS.name().equals(request.getMethod())) {
+			if (StringUtils.isEmpty(request.getHeader("Origin"))) {
+				String origin = request.getHeader("Origin");
+				response.addHeader("Access-Control-Allow-Origin", origin);
+				response.addHeader("Access-Control-Allow-Methods", "*");
+				response.addHeader("Access-Control-Allow-Credentials", "true");
+				response.addHeader("Access-Control-Allow-Headers", "*");
+			} else {
+				response.getWriter().print("OK");
+				response.getWriter().flush();
+			}
+			return null;
+		}
+
 		String tokenPayload = request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM);
 		RawAccessJwtToken token = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
 		return getAuthenticationManager().authenticate(new JwtAuthenticationToken(token));
