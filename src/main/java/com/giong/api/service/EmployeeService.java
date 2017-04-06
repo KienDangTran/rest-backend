@@ -28,10 +28,6 @@ public class EmployeeService extends BaseService<Employee, String, EmployeeRepos
 		return this.repository.count();
 	}
 
-	public Employee findEmployeeyByCode(String employeeCode) {
-		return this.repository.findOne(employeeCode);
-	}
-
 	public void saveOrUpdateEmployee(Employee employee) {
 		this.repository.saveAndFlush(employee);
 	}
@@ -48,6 +44,10 @@ public class EmployeeService extends BaseService<Employee, String, EmployeeRepos
 		final Employee employee = this.findEmployeeyByCode(employeeCode);
 		if (employee == null) { throw new NotFoundException("Employee " + employeeCode + " is not found!"); }
 		this.repository.delete(employee);
+	}
+
+	public Employee findEmployeeyByCode(String employeeCode) {
+		return this.repository.findOne(employeeCode);
 	}
 
 }

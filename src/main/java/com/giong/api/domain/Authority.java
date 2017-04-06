@@ -69,11 +69,6 @@ public class Authority extends AbstractEntity implements GrantedAuthority, Compa
 	}
 
 	@Override
-	public String getAuthority() {
-		return this.authorityCode;
-	}
-
-	@Override
 	public int compareTo(GrantedAuthority o) {
 		// Neither should ever be null as each entry is checked before adding it to the set.
 		// If the authority is null, it is a custom authority and should precede others.
@@ -82,5 +77,10 @@ public class Authority extends AbstractEntity implements GrantedAuthority, Compa
 		if (this.getAuthority() == null) { return 1; }
 
 		return this.getAuthority().compareTo(o.getAuthority());
+	}
+
+	@Override
+	public String getAuthority() {
+		return this.authorityCode;
 	}
 }

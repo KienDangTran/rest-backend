@@ -44,6 +44,41 @@ public class User extends AbstractEntity {
 		return this.userId;
 	}
 
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(super.toString()).append(": ");
+		sb.append("Username: ").append(this.username).append("; ");
+		sb.append("Password: [PROTECTED]; ");
+		sb.append("Enabled: ").append(this.enabled).append("; ");
+		sb.append("AccountNonExpired: ").append(this.accountNonExpired).append("; ");
+		sb.append("credentialsNonExpired: ").append(this.credentialsNonExpired).append("; ");
+		sb.append("AccountNonLocked: ").append(this.accountNonLocked).append("; ");
+
+		if (!this.getAuthorities().isEmpty()) {
+			sb.append("Granted Permissions: ");
+
+			boolean first = true;
+			for (final GrantedAuthority auth : this.getAuthorities()) {
+				if (!first) { sb.append(","); }
+				first = false;
+
+				sb.append(auth.getAuthority());
+			}
+		} else { sb.append("Not granted any permissions"); }
+
+		return sb.toString();
+	}
+
+	public List<GrantedAuthority> getAuthorities() {
+		if (this.roles == null || this.roles.isEmpty()) { return Collections.emptyList(); }
+
+		final List<Authority> authorities = new ArrayList<>();
+		for (final Role role : this.roles) { authorities.addAll(role.getAuthorities()); }
+
+		return Collections.unmodifiableList(authorities);
+	}
+
 	public String getUserId() {
 		return userId;
 	}
@@ -108,40 +143,12 @@ public class User extends AbstractEntity {
 		this.roles = roles;
 	}
 
-
-	public List<GrantedAuthority> getAuthorities() {
-		if (this.roles == null || this.roles.isEmpty()) { return Collections.emptyList(); }
-
-		final List<Authority> authorities = new ArrayList<>();
-		for (final Role role : this.roles) { authorities.addAll(role.getAuthorities()); }
-
-		return Collections.unmodifiableList(authorities);
-	}
-
+	/**
+	 * Returns the hashcode of the {@code username}.
+	 */
 	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(super.toString()).append(": ");
-		sb.append("Username: ").append(this.username).append("; ");
-		sb.append("Password: [PROTECTED]; ");
-		sb.append("Enabled: ").append(this.enabled).append("; ");
-		sb.append("AccountNonExpired: ").append(this.accountNonExpired).append("; ");
-		sb.append("credentialsNonExpired: ").append(this.credentialsNonExpired).append("; ");
-		sb.append("AccountNonLocked: ").append(this.accountNonLocked).append("; ");
-
-		if (!this.getAuthorities().isEmpty()) {
-			sb.append("Granted Permissions: ");
-
-			boolean first = true;
-			for (final GrantedAuthority auth : this.getAuthorities()) {
-				if (!first) { sb.append(","); }
-				first = false;
-
-				sb.append(auth.getAuthority());
-			}
-		} else { sb.append("Not granted any permissions"); }
-
-		return sb.toString();
+	public int hashCode() {
+		return this.username.hashCode();
 	}
 
 	/**
@@ -153,13 +160,5 @@ public class User extends AbstractEntity {
 	public boolean equals(Object rhs) {
 		if (rhs instanceof User) { return this.username.equals(((User) rhs).username); }
 		return false;
-	}
-
-	/**
-	 * Returns the hashcode of the {@code username}.
-	 */
-	@Override
-	public int hashCode() {
-		return this.username.hashCode();
 	}
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 public class UserContext {
 	private final String username;
+
 	private final List<GrantedAuthority> authorities;
 
 	private UserContext(String username, List<GrantedAuthority> authorities) {

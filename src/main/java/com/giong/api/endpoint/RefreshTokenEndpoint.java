@@ -48,9 +48,11 @@ public class RefreshTokenEndpoint {
 	@Qualifier("jwtHeaderTokenExtractor")
 	private TokenExtractor tokenExtractor;
 
-	@RequestMapping(value = Endpoint.TOKEN_REFRESH_ENTRY_POINT,
-					method = RequestMethod.GET,
-					produces = {MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(
+			value = Endpoint.TOKEN_REFRESH_ENTRY_POINT,
+			method = RequestMethod.GET,
+			produces = {MediaType.APPLICATION_JSON_VALUE}
+	)
 	public @ResponseBody JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		String tokenPayload = tokenExtractor.extract(request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM));

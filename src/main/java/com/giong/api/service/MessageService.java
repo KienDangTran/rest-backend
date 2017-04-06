@@ -20,12 +20,12 @@ public class MessageService implements MessageSourceAware {
 		this.messageSource = messageSource;
 	}
 
+	public String getMessages(String code) {
+		return this.getMessages(code, new Object[]{});
+	}
+
 	public String getMessages(String code, Object... param) {
 		final String msg = this.messageSource.getMessage(code, param, LocaleContextHolder.getLocale());
 		return msg;
-	}
-
-	public String getMessages(String code) {
-		return this.getMessages(code, new Object[]{});
 	}
 }

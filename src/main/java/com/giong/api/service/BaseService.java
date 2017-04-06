@@ -16,10 +16,10 @@ public abstract class BaseService<T, ID extends Serializable, R extends JpaRepos
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	MessageService messageService;
+	protected R repository;
 
 	@Autowired
-	protected R repository;
+	MessageService messageService;
 
 	@Resource
 	public void setRepository(R repository) {

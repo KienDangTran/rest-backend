@@ -29,7 +29,8 @@ public class AjaxAwareAuthenticationFailureHandler implements AuthenticationFail
 
 	@Override
 	public void onAuthenticationFailure(
-			HttpServletRequest request, HttpServletResponse response,
+			HttpServletRequest request,
+			HttpServletResponse response,
 			AuthenticationException e
 	) throws IOException, ServletException {
 

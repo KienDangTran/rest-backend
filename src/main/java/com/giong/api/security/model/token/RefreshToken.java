@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public class RefreshToken implements JwtToken {
 	private Jws<Claims> claims;
+
 	private String token;
 
 	private RefreshToken(String token, Jws<Claims> claims) {

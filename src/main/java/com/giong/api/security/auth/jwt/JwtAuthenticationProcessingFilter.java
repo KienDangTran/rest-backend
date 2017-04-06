@@ -29,12 +29,14 @@ import java.io.IOException;
  */
 public class JwtAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 	private final AuthenticationFailureHandler failureHandler;
+
 	private final TokenExtractor tokenExtractor;
 
 	@Autowired
 	public JwtAuthenticationProcessingFilter(
 			AuthenticationFailureHandler failureHandler,
-			TokenExtractor tokenExtractor, RequestMatcher matcher
+			TokenExtractor tokenExtractor,
+			RequestMatcher matcher
 	) {
 		super(matcher);
 		this.failureHandler = failureHandler;
@@ -65,7 +67,9 @@ public class JwtAuthenticationProcessingFilter extends AbstractAuthenticationPro
 
 	@Override
 	protected void successfulAuthentication(
-			HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain chain,
 			Authentication authResult
 	) throws IOException, ServletException {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -76,7 +80,8 @@ public class JwtAuthenticationProcessingFilter extends AbstractAuthenticationPro
 
 	@Override
 	protected void unsuccessfulAuthentication(
-			HttpServletRequest request, HttpServletResponse response,
+			HttpServletRequest request,
+			HttpServletResponse response,
 			AuthenticationException failed
 	) throws IOException, ServletException {
 		SecurityContextHolder.clearContext();

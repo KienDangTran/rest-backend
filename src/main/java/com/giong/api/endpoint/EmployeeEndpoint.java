@@ -23,9 +23,11 @@ public class EmployeeEndpoint {
 			@RequestParam(required = false, defaultValue = "10") int pageSize
 	) {
 		ResponseWrapper response = new ResponseWrapper();
-		List<EmployeeDTO> employeeDTOs = employeeService.fetchEmployees(pageNo, pageSize).stream()
-														.map(EmployeeDTO::new).collect(Collectors.toList());
-		response.setResponse(employeeDTOs);
+		List<EmployeeDTO> employeeDTOs = employeeService.fetchEmployees(pageNo, pageSize)
+														.stream()
+														.map(EmployeeDTO::new)
+														.collect(Collectors.toList());
+		response.setResult(employeeDTOs);
 		response.setStatus(HttpStatus.OK.value());
 		return response;
 	}
@@ -33,7 +35,7 @@ public class EmployeeEndpoint {
 	@RequestMapping(path = Endpoint.COUNT_EMPLOYEE, method = RequestMethod.GET)
 	public @ResponseBody ResponseWrapper countEmployees() {
 		ResponseWrapper response = new ResponseWrapper();
-		response.setResponse(employeeService.countEmployees());
+		response.setResult(employeeService.countEmployees());
 		response.setStatus(HttpStatus.OK.value());
 		return response;
 	}

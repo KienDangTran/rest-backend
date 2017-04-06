@@ -8,11 +8,12 @@ import java.util.regex.Pattern;
 @Component
 public class EmailValidator {
 
-	private final Pattern pattern;
-	private Matcher matcher;
-
 	private static final String EMAIL_PATTERN =
 			"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+	private final Pattern pattern;
+
+	private Matcher matcher;
 
 	public EmailValidator() {
 		this.pattern = Pattern.compile(EmailValidator.EMAIL_PATTERN);

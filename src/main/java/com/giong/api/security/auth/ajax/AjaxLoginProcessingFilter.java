@@ -22,19 +22,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
-	private static Logger logger = LoggerFactory.getLogger(AjaxLoginProcessingFilter.class);
-	private static final String XML_HTTP_REQUEST = "XMLHttpRequest";
-	private static final String X_REQUESTED_WITH = "X-Requested-With";
 	static final String ORIGIN = "Origin";
 
+	private static final String XML_HTTP_REQUEST = "XMLHttpRequest";
+
+	private static final String X_REQUESTED_WITH = "X-Requested-With";
+
+	private static Logger logger = LoggerFactory.getLogger(AjaxLoginProcessingFilter.class);
+
 	private final AuthenticationSuccessHandler successHandler;
+
 	private final AuthenticationFailureHandler failureHandler;
 
 	private final ObjectMapper objectMapper;
 
 	public AjaxLoginProcessingFilter(
-			String defaultProcessUrl, AuthenticationSuccessHandler successHandler,
-			AuthenticationFailureHandler failureHandler, ObjectMapper mapper
+			String defaultProcessUrl,
+			AuthenticationSuccessHandler successHandler,
+			AuthenticationFailureHandler failureHandler,
+			ObjectMapper mapper
 	) {
 		super(defaultProcessUrl);
 		this.successHandler = successHandler;
@@ -58,8 +64,8 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
 			}
 			return null;
 		}
-		if (!HttpMethod.POST.name().equals(request.getMethod()) || !XML_HTTP_REQUEST.equals(request.getHeader(
-				X_REQUESTED_WITH))) {
+		if (!HttpMethod.POST.name().equals(request.getMethod())
+				|| !XML_HTTP_REQUEST.equals(request.getHeader(X_REQUESTED_WITH))) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Authentication method not supported. Request method: " + request.getMethod());
 			}
@@ -82,7 +88,9 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
 
 	@Override
 	protected void successfulAuthentication(
-			HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain chain,
 			Authentication authResult
 	) throws IOException, ServletException {
 		successHandler.onAuthenticationSuccess(request, response, authResult);
@@ -90,7 +98,8 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
 
 	@Override
 	protected void unsuccessfulAuthentication(
-			HttpServletRequest request, HttpServletResponse response,
+			HttpServletRequest request,
+			HttpServletResponse response,
 			AuthenticationException failed
 	) throws IOException, ServletException {
 		SecurityContextHolder.clearContext();

@@ -56,28 +56,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	protected AjaxLoginProcessingFilter ajaxLoginProcessingFilter() throws Exception {
-		AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(
-				Endpoint.FORM_BASED_LOGIN_ENTRY_POINT,
-				successHandler,
-				failureHandler,
-				objectMapper
-		);
-		filter.setAuthenticationManager(this.authenticationManager);
-		return filter;
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) {
+		auth.authenticationProvider(ajaxAuthenticationProvider);
+		auth.authenticationProvider(jwtAuthenticationProvider);
 	}
 
-	protected JwtAuthenticationProcessingFilter jwtTokenAuthenticationProcessingFilter() throws Exception {
-		List<String> pathsToSkip = Arrays.asList(
-				Endpoint.TOKEN_REFRESH_ENTRY_POINT,
-				Endpoint.FORM_BASED_LOGIN_ENTRY_POINT
-		);
-		SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, Endpoint
-				.TOKEN_BASED_AUTH_ENTRY_POINT);
-		JwtAuthenticationProcessingFilter filter
-				= new JwtAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher);
-		filter.setAuthenticationManager(this.authenticationManager);
-		return filter;
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
 	}
 
 //	@Bean
@@ -93,18 +81,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //		bean.setOrder(0);
 //		return bean;
 //	}
-
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
-	}
-
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) {
-		auth.authenticationProvider(ajaxAuthenticationProvider);
-		auth.authenticationProvider(jwtAuthenticationProvider);
-	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -129,5 +105,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)
 			.addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
 			.addFilterBefore(jwtTokenAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+	}
+
+	protected AjaxLoginProcessingFilter ajaxLoginProcessingFilter() throws Exception {
+		AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(
+				Endpoint.FORM_BASED_LOGIN_ENTRY_POINT,
+				successHandler,
+				failureHandler,
+				objectMapper
+		);
+		filter.setAuthenticationManager(this.authenticationManager);
+		return filter;
+	}
+
+	protected JwtAuthenticationProcessingFilter jwtTokenAuthenticationProcessingFilter() throws Exception {
+		List<String> pathsToSkip = Arrays.asList(
+				Endpoint.TOKEN_REFRESH_ENTRY_POINT,
+				Endpoint.FORM_BASED_LOGIN_ENTRY_POINT
+		);
+		SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, Endpoint
+				.TOKEN_BASED_AUTH_ENTRY_POINT);
+		JwtAuthenticationProcessingFilter filter
+				= new JwtAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher);
+		filter.setAuthenticationManager(this.authenticationManager);
+		return filter;
 	}
 }

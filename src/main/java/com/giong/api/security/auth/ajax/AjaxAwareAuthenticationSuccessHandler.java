@@ -23,6 +23,7 @@ import java.util.Map;
 @Component
 public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 	private final ObjectMapper mapper;
+
 	private final JwtTokenFactory tokenFactory;
 
 	@Autowired
@@ -33,7 +34,8 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
 
 	@Override
 	public void onAuthenticationSuccess(
-			HttpServletRequest request, HttpServletResponse response,
+			HttpServletRequest request,
+			HttpServletResponse response,
 			Authentication authentication
 	) throws IOException, ServletException {
 		UserContext userContext = (UserContext) authentication.getPrincipal();

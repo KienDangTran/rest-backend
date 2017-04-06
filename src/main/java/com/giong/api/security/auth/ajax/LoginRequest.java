@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class LoginRequest {
 	private String username;
+
 	private String password;
 
 	@JsonCreator

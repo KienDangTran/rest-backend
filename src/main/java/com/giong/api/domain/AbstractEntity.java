@@ -29,9 +29,6 @@ public abstract class AbstractEntity implements Serializable {
 		this.persisted = true;
 	}
 
-	@Id
-	public abstract Object getPk();
-
 	public boolean isSelected() {
 		return selected;
 	}
@@ -54,6 +51,9 @@ public abstract class AbstractEntity implements Serializable {
 		sb.append("[").append(this.getPk().toString()).append("]");
 		return sb.toString();
 	}
+
+	@Id
+	public abstract Object getPk();
 
 	/**
 	 * AbstractPk

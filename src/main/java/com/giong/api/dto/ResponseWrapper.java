@@ -25,6 +25,6 @@ public class ResponseWrapper {
 	private String message;
 
 	@JsonProperty
-	private Object response;
+	private Object result;
 
 }

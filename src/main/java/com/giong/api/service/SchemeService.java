@@ -12,11 +12,6 @@ import java.util.List;
 @Service("schemeService")
 public class SchemeService extends BaseService<IdScheme, Integer, SchemeRepository> {
 
-	public IdScheme getSchemeByName(String schemeName) {
-		final List<IdScheme> schemes = this.repository.getSchemeByName(schemeName);
-		if (!schemes.isEmpty()) { return schemes.get(0); } else { return null; }
-	}
-
 	public String generateNextId(String schemeName) {
 		final IdScheme scheme = this.getSchemeByName(schemeName);
 		if (scheme != null) {
@@ -34,6 +29,18 @@ public class SchemeService extends BaseService<IdScheme, Integer, SchemeReposito
 		} else { throw new IllegalArgumentException("Cannot find Scheme with name: " + schemeName); }
 	}
 
+	public IdScheme getSchemeByName(String schemeName) {
+		final List<IdScheme> schemes = this.repository.getSchemeByName(schemeName);
+		if (!schemes.isEmpty()) { return schemes.get(0); } else { return null; }
+	}
+
+	public void increaseLastGenNo(IdScheme scheme) {
+		if (scheme != null) {
+			scheme.setLastGenNo(scheme.getLastGenNo() + 1);
+			this.repository.save(scheme);
+		}
+	}
+
 	public String getLastGeneratedId(String schemeName) {
 		final IdScheme scheme = this.getSchemeByName(schemeName);
 		if (scheme != null) {
@@ -49,12 +56,5 @@ public class SchemeService extends BaseService<IdScheme, Integer, SchemeReposito
 			this.increaseLastGenNo(scheme);
 			return codeBuilder.toString();
 		} else { throw new IllegalArgumentException("Cannot find Scheme with name: " + schemeName); }
-	}
-
-	public void increaseLastGenNo(IdScheme scheme) {
-		if (scheme != null) {
-			scheme.setLastGenNo(scheme.getLastGenNo() + 1);
-			this.repository.save(scheme);
-		}
 	}
 }

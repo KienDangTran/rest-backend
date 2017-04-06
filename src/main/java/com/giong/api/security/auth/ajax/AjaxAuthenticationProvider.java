@@ -18,6 +18,7 @@ import org.springframework.util.Assert;
 @Component
 public class AjaxAuthenticationProvider implements AuthenticationProvider {
 	private final BCryptPasswordEncoder encoder;
+
 	private final UserService userService;
 
 	@Autowired

@@ -21,9 +21,11 @@ public class Role extends AbstractEntity {
 	private String status = Status.ACTIVE;
 
 	@ManyToMany(cascade = {CascadeType.REFRESH}, fetch = FetchType.EAGER)
-	@JoinTable(name = "role_authority", joinColumns = {
-			@JoinColumn(name = "role_code")
-	}, inverseJoinColumns = {@JoinColumn(name = "authority_code")})
+	@JoinTable(
+			name = "role_authority",
+			joinColumns = {@JoinColumn(name = "role_code")},
+			inverseJoinColumns = {@JoinColumn(name = "authority_code")}
+	)
 	private List<Authority> authorities = new ArrayList<>();
 
 	@ManyToMany(mappedBy = "roles")

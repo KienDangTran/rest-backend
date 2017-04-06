@@ -26,7 +26,7 @@ public class HomeEndpoint extends BaseEndpoint {
 
 		final String formattedDate = dateFormat.format(date);
 		final ResponseWrapper response = new ResponseWrapper();
-		response.setResponse(formattedDate);
+		response.setResult(formattedDate);
 		response.setStatus(HttpStatus.OK.value());
 
 		return response;
