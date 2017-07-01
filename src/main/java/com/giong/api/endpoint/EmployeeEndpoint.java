@@ -14,8 +14,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(Endpoint.EMPLOYEE)
 public class EmployeeEndpoint {
-	@Autowired
-	private EmployeeService employeeService;
+	private final EmployeeService employeeService;
+
+	@Autowired public EmployeeEndpoint(EmployeeService employeeService) {this.employeeService = employeeService;}
 
 	@RequestMapping(path = Endpoint.FETCH_EMPLOYEE, method = RequestMethod.GET)
 	public @ResponseBody ResponseWrapper fetchEmployees(

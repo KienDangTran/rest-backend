@@ -2,7 +2,6 @@ package com.giong.api.security.auth.ajax;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giong.api.security.model.UserContext;
-import com.giong.api.security.model.token.JwtToken;
 import com.giong.api.security.model.token.JwtTokenFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,12 +39,9 @@ public class AjaxAwareAuthenticationSuccessHandler implements AuthenticationSucc
 	) throws IOException, ServletException {
 		UserContext userContext = (UserContext) authentication.getPrincipal();
 
-		JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
-		JwtToken refreshToken = tokenFactory.createRefreshToken(userContext);
-
 		Map<String, String> tokenMap = new HashMap<>();
-		tokenMap.put("token", accessToken.getToken());
-		tokenMap.put("refreshToken", refreshToken.getToken());
+		tokenMap.put(JwtTokenFactory.ACCESS_TOKEN, tokenFactory.createAccessToken(userContext));
+		tokenMap.put(JwtTokenFactory.REFRESH_TOKEN, tokenFactory.createRefreshToken(userContext));
 
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);

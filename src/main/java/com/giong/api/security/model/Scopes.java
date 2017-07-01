@@ -1,9 +1,9 @@
 package com.giong.api.security.model;
 
 public enum Scopes {
-	REFRESH_TOKEN;
+	ACCESS_TOKEN, REFRESH_TOKEN;
 
 	public String authority() {
-		return "ROLE_" + this.name();
+		return this.name();
 	}
 }

@@ -1,10 +1,8 @@
 package com.giong.api.security.model.token;
 
-import com.giong.api.exception.InvalidJwtToken;
 import com.giong.api.security.config.JwtSettings;
 import com.giong.api.security.model.Scopes;
 import com.giong.api.security.model.UserContext;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,6 +21,10 @@ import java.util.stream.Collectors;
  */
 @Component
 public class JwtTokenFactory {
+	public static final String SCOPES = "scopes";
+	public static final String ACCESS_TOKEN = "token";
+	public static final String REFRESH_TOKEN = "refreshToken";
+
 	private final JwtSettings settings;
 
 	@Autowired
@@ -32,7 +35,29 @@ public class JwtTokenFactory {
 	/**
 	 * Factory method for issuing new JWT Tokens.
 	 */
-	public AccessJwtToken createAccessJwtToken(UserContext userContext) {
+	private String createJwtToken(String subject, List<String> scopes) {
+		if (StringUtils.isEmpty(subject)) {
+			throw new IllegalArgumentException("Cannot create JWT Token without subject");
+		}
+
+		if (scopes.isEmpty()) {
+			throw new IllegalArgumentException("scopes is empty");
+		}
+
+		Date now = new Date();
+
+		return Jwts.builder()
+				   .setId(UUID.randomUUID().toString())
+				   .setSubject(subject)
+				   .claim(SCOPES, scopes)
+				   .setIssuer(settings.getTokenIssuer())
+				   .setIssuedAt(now)
+				   .setExpiration(Date.from(now.toInstant().plusSeconds(settings.getTokenExpirationTime())))
+				   .signWith(SignatureAlgorithm.HS256, settings.getTokenSigningKey())
+				   .compact();
+	}
+
+	public String createAccessToken(UserContext userContext) {
 		if (StringUtils.isEmpty(userContext.getUsername())) {
 			throw new IllegalArgumentException("Cannot create JWT Token without username");
 		}
@@ -41,43 +66,21 @@ public class JwtTokenFactory {
 			throw new IllegalArgumentException("User doesn't have any privileges");
 		}
 
-		Claims claims = Jwts.claims().setSubject(userContext.getUsername());
-		claims.put(
-				"scopes",
-				userContext.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList())
-		);
-
-		Date now = new Date();
-		String token = Jwts.builder()
-						   .setClaims(claims)
-						   .setIssuer(settings.getTokenIssuer())
-						   .setIssuedAt(now)
-						   .setExpiration(Date.from(now.toInstant().plusSeconds(settings.getTokenExpirationTime())))
-						   .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey())
-						   .compact();
-
-		return new AccessJwtToken(token, claims);
+		List<String> scopes = userContext.getAuthorities()
+										 .stream()
+										 .map(GrantedAuthority::getAuthority)
+										 .collect(Collectors.toList());
+		scopes.add(Scopes.ACCESS_TOKEN.authority());
+		return this.createJwtToken(userContext.getUsername(), scopes);
 	}
 
-	public JwtToken createRefreshToken(UserContext userContext) {
+	public String createRefreshToken(UserContext userContext) {
 		if (StringUtils.isEmpty(userContext.getUsername())) {
 			throw new IllegalArgumentException("Cannot create JWT Token without username");
 		}
 
-		Claims claims = Jwts.claims().setSubject(userContext.getUsername());
-		claims.put("scopes", Collections.singletonList(Scopes.REFRESH_TOKEN.authority()));
+		List<String> scopes = Collections.singletonList(Scopes.REFRESH_TOKEN.authority());
 
-		Date now = new Date();
-		String token = Jwts.builder()
-						   .setClaims(claims)
-						   .setIssuer(settings.getTokenIssuer())
-						   .setId(UUID.randomUUID().toString())
-						   .setIssuedAt(now)
-						   .setExpiration(Date.from(now.toInstant().plusSeconds(settings.getRefreshTokenExpTime())))
-						   .signWith(SignatureAlgorithm.HS512, settings.getTokenSigningKey())
-						   .compact();
-
-		return RefreshToken.create(new RawAccessJwtToken(token), settings.getTokenSigningKey())
-						   .orElseThrow(InvalidJwtToken::new);
+		return this.createJwtToken(userContext.getUsername(), scopes);
 	}
 }

@@ -123,10 +123,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				Endpoint.TOKEN_REFRESH_ENTRY_POINT,
 				Endpoint.FORM_BASED_LOGIN_ENTRY_POINT
 		);
-		SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, Endpoint
-				.TOKEN_BASED_AUTH_ENTRY_POINT);
-		JwtAuthenticationProcessingFilter filter
-				= new JwtAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher);
+		SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(
+				pathsToSkip,
+				Endpoint.TOKEN_BASED_AUTH_ENTRY_POINT
+		);
+		JwtAuthenticationProcessingFilter filter = new JwtAuthenticationProcessingFilter(
+				failureHandler,
+				tokenExtractor,
+				matcher
+		);
 		filter.setAuthenticationManager(this.authenticationManager);
 		return filter;
 	}
